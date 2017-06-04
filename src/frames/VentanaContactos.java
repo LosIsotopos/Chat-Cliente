@@ -6,6 +6,9 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.geom.FlatteningPathIterator;
+import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -28,8 +31,10 @@ import mensajeria.PaqueteUsuario;
 public class VentanaContactos extends JFrame {
 
 	private JPanel contentPane;
-	private String user = "";
-	Cliente cliente;
+	private String user = null;
+	private static Cliente cliente;
+	public static DefaultListModel<String> modelo = new DefaultListModel<String>();
+	public static JList<String> list = new JList<String>();
 	private PaqueteUsuario paqueteUsuario;
 	private boolean flagConexion = false;
 	private JTextField jTFMiNombre;
@@ -65,18 +70,20 @@ public class VentanaContactos extends JFrame {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
-				if(cliente != null) {
-					synchronized(cliente){
-						//Desconectar para que aparezca que tal usuario deslogeo
-						cliente.setAccion(Comando.DESCONECTAR);
-						cliente.notify();
-						//Salir para que aparezca que tal IP deslogeo
-						cliente.setAccion(Comando.SALIR);
-						cliente.notify();
+				if(abrirVentanaConfirmaSalir()) {
+					if(cliente != null) {
+						synchronized(cliente){
+							//Desconectar para que aparezca que tal usuario deslogeo
+							cliente.setAccion(Comando.DESCONECTAR);
+							cliente.notify();
+							//Salir para que aparezca que tal IP deslogeo
+							cliente.setAccion(Comando.SALIR);
+							cliente.notify();
+						}
+						setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 					}
-					setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+					System.exit(0);
 				}
-				abrirVentanaConfirmaSalir();
 			}
 		});
 		
@@ -90,15 +97,15 @@ public class VentanaContactos extends JFrame {
 		contentPane.add(scrollPane);
 		
 		
-		DefaultListModel<String> modelo = new DefaultListModel<String>();
-		modelo.addElement("Pepe");
-		modelo.addElement("Pepa");
-		modelo.addElement("Papo");
+//		DefaultListModel<String> modelo = new DefaultListModel<String>();
+//		modelo.addElement("Pepe");
+//		modelo.addElement("Pepa");
+//		modelo.addElement("Papo");
 //		for (int i = 0; i < Servidor.getUsuariosConectados().size(); i++) {
 //			modelo.addElement(Servidor.getUsuariosConectados().get(i));
 //		}
 		
-		JList<String> list = new JList<String>();
+//		JList<String> list = new JList<String>();
 		list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -127,7 +134,7 @@ public class VentanaContactos extends JFrame {
 		JButton botonConectar = new JButton("Conectar");
 		botonConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(user.equals("")) {
+				if(user == null) {
 					InterfaceLogeo interfaceLogeo = new InterfaceLogeo();
 					interfaceLogeo.setTitle("Logeo");
 					interfaceLogeo.setVisible(true);
@@ -141,12 +148,11 @@ public class VentanaContactos extends JFrame {
 			                	cliente = new Cliente();
 			                	cliente.start();
 			                	logIn(cliente);
+			                	actualizarLista();
+			                	botonConectar.setEnabled(false);
 			                }
 			            }
 			        });
-				} else {
-					JOptionPane.showMessageDialog(null, "Ya has iniciado sesión!");
-					botonConectar.setEnabled(false);
 				}
 			}
 		});
@@ -157,7 +163,7 @@ public class VentanaContactos extends JFrame {
 		botonMc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				MiChat chat = new MiChat();
-				chat.setTitle(list.getSelectedValue());
+//				chat.setTitle(list.getSelectedValue());
 				chat.setTitle("Sala");
 				chat.setVisible(true);
 			}
@@ -185,10 +191,12 @@ public class VentanaContactos extends JFrame {
 
 	}
 
-	private void abrirVentanaConfirmaSalir() {
+	private boolean abrirVentanaConfirmaSalir() {
 		int opcion = JOptionPane.showConfirmDialog(this, "¿Desea salir del Chat?", "Confirmación", JOptionPane.YES_NO_OPTION);
-		if(opcion == JOptionPane.YES_OPTION)
-			System.exit(0);
+		if(opcion == JOptionPane.YES_OPTION) {
+			return true;
+		}
+		return false;
 	}
 	
 	private void logIn(final Cliente cliente) {
@@ -202,7 +210,24 @@ public class VentanaContactos extends JFrame {
 		}
 	}
 
+	public static void actualizarLista() {
+//		cliente.setAccion(Comando.USUARIOSCONECTADOS);
+//		cliente.notify();
+		if(cliente != null) {
+			System.out.println("AA");
+			ArrayList<String> l1 = new ArrayList();
+			l1 = EscuchaMensajes.getUsuariosConectados();
+			int i = 0;
+			for (String string : l1) {
+				modelo.addElement(l1.get(i));
+				i++;
+			}
+			list.setModel(modelo);
+		}
+	}
+	
 	public PaqueteUsuario getPaqueteUsuario() {
 		return paqueteUsuario;
 	}
+	
 }

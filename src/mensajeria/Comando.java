@@ -8,5 +8,5 @@ public class Comando {
 	public static final int CHATALL = 3;
 	public static final int SALIR = 4;
 	public static final int DESCONECTAR = 5;
-	
+//	public static final int USUARIOSCONECTADOS = 6;
 }

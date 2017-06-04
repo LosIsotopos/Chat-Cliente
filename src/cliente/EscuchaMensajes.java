@@ -1,6 +1,7 @@
 package cliente;
 
 import java.io.ObjectInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +25,8 @@ public class EscuchaMensajes extends Thread {
 	private final Gson gson = new Gson();
 
 	private Map<String, PaqueteUsuario> personajesConectados;
+	protected static ArrayList<String> usuariosConectados = new ArrayList<String>();
+
 	/**Constructor de EsuchaMensaje
 	 * @param juego juego del que se escucha el mensaje
 	 */
@@ -51,7 +54,8 @@ public class EscuchaMensajes extends Thread {
 				switch (paquete.getComando()) {
 
 					case Comando.CONEXION:
-						personajesConectados = gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajesConectados();
+						usuariosConectados = gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
+//						usuariosConectados = gson.fromJson(objetoLeido, ArrayList.class);
 						break;
 	
 					case Comando.TALK:
@@ -74,5 +78,9 @@ public class EscuchaMensajes extends Thread {
 	 */
 	public Map<String, PaqueteUsuario> getPersonajesConectados() {
 		return personajesConectados;
+	}
+	
+	public static ArrayList<String> getUsuariosConectados() {
+		return usuariosConectados;
 	}
 }
