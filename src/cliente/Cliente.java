@@ -61,12 +61,9 @@ public class Cliente extends Thread {
 	public void run() {
 		synchronized(this) {
 			try {
-		
 				// Creo el paquete que le voy a enviar al servidor
 				paqueteUsuario = new PaqueteUsuario();
-			
 				while (!paqueteUsuario.isInicioSesion()) {
-			
 					// Creo los paquetes que le voy a enviar al servidor
 					paqueteUsuario = new PaqueteUsuario();
 			
@@ -128,10 +125,8 @@ public class Cliente extends Thread {
 				}
 				wait();
 			
-				// Establezco el mapa en el paquete personaje
+				// Establezco el mapa en el paquete usuario
 				paqueteUsuario.setIp(miIp);
-			
-				// Le envio el paquete con el mapa seleccionado
 				salida.writeObject(gson.toJson(paqueteUsuario));
 			
 			} catch (IOException | InterruptedException | ClassNotFoundException e) {

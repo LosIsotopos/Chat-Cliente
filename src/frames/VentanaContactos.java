@@ -66,8 +66,8 @@ public class VentanaContactos extends JFrame {
 			public void windowClosing(WindowEvent arg0) {
 				if(cliente != null) {
 					synchronized(cliente){
-					cliente.setAccion(Comando.SALIR);
-					cliente.notify();
+						cliente.setAccion(Comando.SALIR);
+						cliente.notify();
 					}
 					setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 				}
@@ -182,7 +182,7 @@ public class VentanaContactos extends JFrame {
 			System.exit(0);
 	}
 	
-	private void logIn(Cliente cliente) {
+	private void logIn(final Cliente cliente) {
 		synchronized(cliente){
 			cliente.setAccion(Comando.INICIOSESION);
 			System.out.println(jTFMiNombre.getText());
