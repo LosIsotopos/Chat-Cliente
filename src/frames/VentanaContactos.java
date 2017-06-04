@@ -21,6 +21,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 import cliente.Cliente;
+import cliente.EscuchaMensajes;
 import mensajeria.Comando;
 import mensajeria.PaqueteUsuario;
 
@@ -66,6 +67,10 @@ public class VentanaContactos extends JFrame {
 			public void windowClosing(WindowEvent arg0) {
 				if(cliente != null) {
 					synchronized(cliente){
+						//Desconectar para que aparezca que tal usuario deslogeo
+						cliente.setAccion(Comando.DESCONECTAR);
+						cliente.notify();
+						//Salir para que aparezca que tal IP deslogeo
 						cliente.setAccion(Comando.SALIR);
 						cliente.notify();
 					}
@@ -98,9 +103,13 @@ public class VentanaContactos extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				if(arg0.getClickCount() == 2) {
-					MiChat chat = new MiChat();
-					chat.setTitle(list.getSelectedValue());
-					chat.setVisible(true);
+					if(cliente != null) {
+						MiChat chat = new MiChat();
+						EscuchaMensajes em = new EscuchaMensajes(cliente);
+						em.start();
+						chat.setTitle(list.getSelectedValue());
+						chat.setVisible(true);
+					}
 				}
 			}
 		});
@@ -183,11 +192,13 @@ public class VentanaContactos extends JFrame {
 	}
 	
 	private void logIn(final Cliente cliente) {
-		synchronized(cliente){
+		synchronized(this){
 			cliente.setAccion(Comando.INICIOSESION);
 			System.out.println(jTFMiNombre.getText());
 			cliente.getPaqueteUsuario().setUsername(jTFMiNombre.getText());
-			cliente.notify();
+			synchronized(cliente){
+				cliente.notify();
+			}
 		}
 	}
 

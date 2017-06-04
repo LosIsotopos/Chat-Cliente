@@ -2,13 +2,20 @@ package mensajeria;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PaqueteDeUsuarios extends Paquete implements Serializable, Cloneable {
 
 		private ArrayList<String> usuarios;
+		private Map<String, PaqueteUsuario> personajesConectados;
 
 		public PaqueteDeUsuarios(){
 
+		}
+
+		public Map<String, PaqueteUsuario> getPersonajesConectados() {
+			return personajesConectados;
 		}
 
 		public PaqueteDeUsuarios(ArrayList<String> usuarios){

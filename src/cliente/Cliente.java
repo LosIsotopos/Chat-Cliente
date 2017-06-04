@@ -21,7 +21,7 @@ public class Cliente extends Thread {
 	private static String miIp;
 	private ObjectInputStream entrada;
 	private ObjectOutputStream salida;
-	private PaqueteUsuario paqueteUsuario;
+	private PaqueteUsuario paqueteUsuario = new PaqueteUsuario();
 	private int accion;
 	
 	private final Gson gson = new Gson();
@@ -117,7 +117,12 @@ public class Cliente extends Thread {
 							salida.writeObject(gson.toJson(new Paquete(Comando.DESCONECTAR), Paquete.class));
 							cliente.close();
 							break;
-				
+							
+						case Comando.DESCONECTAR:
+							PaqueteUsuario pU = new PaqueteUsuario();
+							pU.setComando(Comando.DESCONECTAR);
+							salida.writeObject(gson.toJson(pU, PaqueteUsuario.class));
+							break;
 						default:
 							break;
 						}
@@ -128,7 +133,7 @@ public class Cliente extends Thread {
 				// Establezco el mapa en el paquete usuario
 				paqueteUsuario.setIp(miIp);
 				salida.writeObject(gson.toJson(paqueteUsuario));
-			
+				notify();
 			} catch (IOException | InterruptedException | ClassNotFoundException e) {
 				JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor durante el inicio de sesión.");
 				System.exit(1);
