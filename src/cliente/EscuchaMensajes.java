@@ -55,7 +55,6 @@ public class EscuchaMensajes extends Thread {
 
 					case Comando.CONEXION:
 						usuariosConectados = gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
-//						usuariosConectados = gson.fromJson(objetoLeido, ArrayList.class);
 						break;
 	
 					case Comando.TALK:

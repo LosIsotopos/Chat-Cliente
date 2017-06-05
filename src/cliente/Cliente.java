@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
+import frames.InterfaceLogeo;
 import mensajeria.Comando;
 import mensajeria.Paquete;
 import mensajeria.PaqueteUsuario;
@@ -95,17 +96,16 @@ public class Cliente extends Thread {
 						case Comando.INICIOSESION:
 							if (paquete.getMensaje().equals(Paquete.msjExito)) {
 				
-								// El usuario ya inicio sesi�n
+								// El usuario ya inicio sesión
 								paqueteUsuario.setInicioSesion(true);
 				
 								// Recibo el paquete personaje con los datos
 								paqueteUsuario = gson.fromJson(cadenaLeida, PaqueteUsuario.class);
 				
 							} else {
-								if (paquete.getMensaje().equals(Paquete.msjFracaso))
-									JOptionPane.showMessageDialog(null, "Error al iniciar sesión."
-											+ " Revise el usuario y la contraseña");
-				
+								if (paquete.getMensaje().equals(Paquete.msjFracaso)) {
+									JOptionPane.showMessageDialog(null, "El usuario ya se encuentra logeado.");
+								}
 								// El usuario no pudo iniciar sesión
 								paqueteUsuario.setInicioSesion(false);
 							}

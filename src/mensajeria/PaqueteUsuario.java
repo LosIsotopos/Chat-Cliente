@@ -1,12 +1,14 @@
 package mensajeria;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class PaqueteUsuario extends Paquete implements Serializable, Cloneable {
 
 	private String username;
 	private boolean inicioSesion;
 	private boolean estado;
+	private ArrayList<String> usuarioConectado;
 
 	public PaqueteUsuario(){
 		
@@ -39,6 +41,14 @@ public class PaqueteUsuario extends Paquete implements Serializable, Cloneable {
 
 	public void setEstado(boolean estado) {
 		this.estado = estado;
+	}
+	
+	public ArrayList<String> getUsuarioConectado() {
+		return usuarioConectado;
+	}
+
+	public void setUsuarioConectado(ArrayList<String> usuarioConectado) {
+		this.usuarioConectado = usuarioConectado;
 	}
 	
 	public Object clone() {

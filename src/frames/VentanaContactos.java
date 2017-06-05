@@ -148,7 +148,7 @@ public class VentanaContactos extends JFrame {
 			                	cliente = new Cliente();
 			                	cliente.start();
 			                	logIn(cliente);
-			                	actualizarLista();
+			                	actualizarLista(cliente);
 			                	botonConectar.setEnabled(false);
 			                }
 			            }
@@ -210,17 +210,19 @@ public class VentanaContactos extends JFrame {
 		}
 	}
 
-	public static void actualizarLista() {
+	public static void actualizarLista(final Cliente cliente) {
 //		cliente.setAccion(Comando.USUARIOSCONECTADOS);
 //		cliente.notify();
 		if(cliente != null) {
 			System.out.println("AA");
-			ArrayList<String> l1 = new ArrayList();
-			l1 = EscuchaMensajes.getUsuariosConectados();
+			ArrayList<String> l1 = cliente.getPaqueteUsuario().getUsuarioConectado();
 			int i = 0;
-			for (String string : l1) {
-				modelo.addElement(l1.get(i));
-				i++;
+			if( l1 != null ) {
+				for (String string : l1) {
+					modelo.addElement(l1.get(i));
+					i++;
+				}
+				
 			}
 			list.setModel(modelo);
 		}
