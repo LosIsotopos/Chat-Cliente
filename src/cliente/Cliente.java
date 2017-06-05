@@ -64,11 +64,13 @@ public class Cliente extends Thread {
 				// Creo el paquete que le voy a enviar al servidor
 				paqueteUsuario = new PaqueteUsuario();
 				while (!paqueteUsuario.isInicioSesion()) {
+					
 					// Creo los paquetes que le voy a enviar al servidor
-					paqueteUsuario = new PaqueteUsuario();
-			
+//					paqueteUsuario = new PaqueteUsuario();
+
 					// Espero a que el usuario seleccione alguna accion
 					wait();
+			
 			
 					switch (getAccion()) {
 			
@@ -111,7 +113,6 @@ public class Cliente extends Thread {
 								if (paquete.getMensaje().equals(Paquete.msjFracaso))
 									JOptionPane.showMessageDialog(null, "Error al iniciar sesión."
 											+ " Revise el usuario y la contraseña");
-				
 								// El usuario no pudo iniciar sesión
 								paqueteUsuario.setInicioSesion(false);
 							}
@@ -132,7 +133,7 @@ public class Cliente extends Thread {
 						default:
 							break;
 						}
-					wait();
+//					wait();
 			
 				}
 			

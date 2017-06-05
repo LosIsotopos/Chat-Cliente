@@ -39,6 +39,7 @@ public class VentanaContactos extends JFrame {
 	private PaqueteUsuario paqueteUsuario;
 	private boolean flagConexion = false;
 	private JTextField jTFMiNombre;
+	private JLabel lblNumeroConectados = new JLabel("");
 
 	/**
 	 * Launch the application.
@@ -49,6 +50,7 @@ public class VentanaContactos extends JFrame {
 				try {
 					VentanaContactos frame = new VentanaContactos();
 					frame.setVisible(true);
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -96,15 +98,6 @@ public class VentanaContactos extends JFrame {
 		scrollPane.setBounds(10, 11, 299, 188);
 		contentPane.add(scrollPane);
 
-		// DefaultListModel<String> modelo = new DefaultListModel<String>();
-		// modelo.addElement("Pepe");
-		// modelo.addElement("Pepa");
-		// modelo.addElement("Papo");
-		// for (int i = 0; i < Servidor.getUsuariosConectados().size(); i++) {
-		// modelo.addElement(Servidor.getUsuariosConectados().get(i));
-		// }
-
-		// JList<String> list = new JList<String>();
 		list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
@@ -148,7 +141,6 @@ public class VentanaContactos extends JFrame {
 								cliente.start();
 								logIn(cliente);
 								actualizarLista(cliente);
-								// cliente.notify();
 								botonConectar.setEnabled(false);
 							}
 						}
@@ -175,7 +167,6 @@ public class VentanaContactos extends JFrame {
 		lblUsuariosConectados.setBounds(10, 235, 138, 16);
 		contentPane.add(lblUsuariosConectados);
 
-		JLabel lblNumeroConectados = new JLabel("");
 		lblNumeroConectados.setHorizontalAlignment(SwingConstants.RIGHT);
 		lblNumeroConectados.setBounds(253, 235, 56, 16);
 		contentPane.add(lblNumeroConectados);
@@ -217,10 +208,13 @@ public class VentanaContactos extends JFrame {
 				cliente.wait(25);
 				System.out.println("ACTUALIZAR LISTA");
 				if (cliente.getPaqueteUsuario().getListaDeConectados() != null) {
+					cliente.getPaqueteUsuario().getListaDeConectados()
+							.remove(cliente.getPaqueteUsuario().getUsername());
 					for (String cad : cliente.getPaqueteUsuario().getListaDeConectados()) {
 						System.out.println(cad + "HOLA");
 						modelo.addElement(cad);
 					}
+					lblNumeroConectados.setText(String.valueOf(modelo.getSize()));
 					list.setModel(modelo);
 				}
 			} catch (InterruptedException e) {
