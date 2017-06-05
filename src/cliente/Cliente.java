@@ -1,5 +1,6 @@
 package cliente;
 
+import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class Cliente extends Thread {
 				paqueteUsuario = new PaqueteUsuario();
 				while (!paqueteUsuario.isInicioSesion()) {
 					// Creo los paquetes que le voy a enviar al servidor
-					paqueteUsuario = new PaqueteUsuario();
+//					paqueteUsuario = new PaqueteUsuario();
 			
 					// Espero a que el usuario seleccione alguna accion
 					wait();
@@ -75,6 +76,7 @@ public class Cliente extends Thread {
 			
 					case Comando.INICIOSESION:
 						paqueteUsuario.setComando(Comando.INICIOSESION);
+						System.out.println("INICIO SESION");
 						break;
 					case Comando.SALIR:
 						paqueteUsuario.setIp(getMiIp());
@@ -86,10 +88,11 @@ public class Cliente extends Thread {
 			
 					// Le envio el paquete al servidor
 					salida.writeObject(gson.toJson(paqueteUsuario));
-			
+//					System.out.println("ENVIE PAQUETE");
 					// Recibo el paquete desde el servidor
 					String cadenaLeida = (String) entrada.readObject();
 					Paquete paquete = gson.fromJson(cadenaLeida, Paquete.class);
+//					System.out.println("RECIBI PAQUETE");
 			
 					switch (paquete.getComando()) {
 			
@@ -100,7 +103,7 @@ public class Cliente extends Thread {
 								paqueteUsuario.setInicioSesion(true);
 				
 								// Recibo el paquete personaje con los datos
-								paqueteUsuario = gson.fromJson(cadenaLeida, PaqueteUsuario.class);
+								this.paqueteUsuario = gson.fromJson(cadenaLeida, PaqueteUsuario.class);
 				
 							} else {
 								if (paquete.getMensaje().equals(Paquete.msjFracaso)) {
@@ -123,12 +126,13 @@ public class Cliente extends Thread {
 							pU.setComando(Comando.DESCONECTAR);
 							salida.writeObject(gson.toJson(pU, PaqueteUsuario.class));
 							break;
+							
 						default:
 							break;
 						}
+//					wait();
 			
 				}
-				wait();
 			
 				// Establezco el mapa en el paquete usuario
 				paqueteUsuario.setIp(miIp);

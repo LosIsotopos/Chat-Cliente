@@ -1,17 +1,25 @@
 package mensajeria;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
 public class PaqueteUsuario extends Paquete implements Serializable, Cloneable {
 
 	private String username;
 	private boolean inicioSesion;
 	private boolean estado;
-	private ArrayList<String> usuarioConectado;
+	private List<String> listaDeConectados;
 
 	public PaqueteUsuario(){
 		
+	}
+
+	public List<String> getListaDeConectados() {
+		return listaDeConectados;
+	}
+
+	public void setListaDeConectados(List<String> listaDeConectados) {
+		this.listaDeConectados = listaDeConectados;
 	}
 
 	public PaqueteUsuario(String user){
@@ -41,14 +49,6 @@ public class PaqueteUsuario extends Paquete implements Serializable, Cloneable {
 
 	public void setEstado(boolean estado) {
 		this.estado = estado;
-	}
-	
-	public ArrayList<String> getUsuarioConectado() {
-		return usuarioConectado;
-	}
-
-	public void setUsuarioConectado(ArrayList<String> usuarioConectado) {
-		this.usuarioConectado = usuarioConectado;
 	}
 	
 	public Object clone() {
