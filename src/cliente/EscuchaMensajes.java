@@ -14,9 +14,10 @@ import mensajeria.Paquete;
 import mensajeria.PaqueteDeUsuarios;
 import mensajeria.PaqueteMensaje;
 import mensajeria.PaqueteUsuario;
-/**La clase EscuchaMensajes tiene como función  
- * esuchar los mensajes que se enviaran
- * al servidor.
+
+/**
+ * La clase EscuchaMensajes tiene como función esuchar los mensajes que se
+ * enviaran al servidor.
  */
 public class EscuchaMensajes extends Thread {
 
@@ -27,8 +28,11 @@ public class EscuchaMensajes extends Thread {
 	private Map<String, PaqueteUsuario> personajesConectados;
 	protected static ArrayList<String> usuariosConectados = new ArrayList<String>();
 
-	/**Constructor de EsuchaMensaje
-	 * @param juego juego del que se escucha el mensaje
+	/**
+	 * Constructor de EsuchaMensaje
+	 * 
+	 * @param juego
+	 *            juego del que se escucha el mensaje
 	 */
 	public EscuchaMensajes(final Cliente cliente) {
 		this.cliente = cliente;
@@ -49,22 +53,24 @@ public class EscuchaMensajes extends Thread {
 
 				String objetoLeido = (String) entrada.readObject();
 
-				paquete = gson.fromJson(objetoLeido , Paquete.class);
+				paquete = gson.fromJson(objetoLeido, Paquete.class);
 
 				switch (paquete.getComando()) {
+				
+				case Comando.INICIOSESION:
+					usuariosConectados = gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
+					break;
+				case Comando.CONEXION:
+					usuariosConectados = gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
+					break;
 
-					case Comando.CONEXION:
-						usuariosConectados = gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
-//						usuariosConectados = gson.fromJson(objetoLeido, ArrayList.class);
-						break;
-	
-					case Comando.TALK:
-						paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
-						break;
-	
-					case Comando.CHATALL:
-						paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
-						break;
+				case Comando.TALK:
+					paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
+					break;
+
+				case Comando.CHATALL:
+					paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
+					break;
 				}
 			}
 		} catch (Exception e) {
@@ -72,14 +78,16 @@ public class EscuchaMensajes extends Thread {
 			e.printStackTrace();
 		}
 	}
-	
-	/**Pide los personajes conectados
+
+	/**
+	 * Pide los personajes conectados
+	 * 
 	 * @return devuelve el mapa con los personajes conectados
 	 */
 	public Map<String, PaqueteUsuario> getPersonajesConectados() {
 		return personajesConectados;
 	}
-	
+
 	public static ArrayList<String> getUsuariosConectados() {
 		return usuariosConectados;
 	}

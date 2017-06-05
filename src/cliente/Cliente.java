@@ -74,6 +74,7 @@ public class Cliente extends Thread {
 			
 					case Comando.INICIOSESION:
 						paqueteUsuario.setComando(Comando.INICIOSESION);
+						System.out.println("INICIO SESION");
 						break;
 					case Comando.SALIR:
 						paqueteUsuario.setIp(getMiIp());
@@ -85,10 +86,11 @@ public class Cliente extends Thread {
 			
 					// Le envio el paquete al servidor
 					salida.writeObject(gson.toJson(paqueteUsuario));
-			
+					System.out.println("ENVIE PAQUETE");
 					// Recibo el paquete desde el servidor
 					String cadenaLeida = (String) entrada.readObject();
 					Paquete paquete = gson.fromJson(cadenaLeida, Paquete.class);
+					System.out.println("RECIBI PAQUETE");
 			
 					switch (paquete.getComando()) {
 			
@@ -99,7 +101,11 @@ public class Cliente extends Thread {
 								paqueteUsuario.setInicioSesion(true);
 				
 								// Recibo el paquete personaje con los datos
-								paqueteUsuario = gson.fromJson(cadenaLeida, PaqueteUsuario.class);
+								this.paqueteUsuario = gson.fromJson(cadenaLeida, PaqueteUsuario.class);
+								
+								for (String users: paqueteUsuario.getListaDeConectados()) {
+									System.out.println("USERS "+users);
+								}
 				
 							} else {
 								if (paquete.getMensaje().equals(Paquete.msjFracaso))
@@ -126,9 +132,9 @@ public class Cliente extends Thread {
 						default:
 							break;
 						}
+					wait();
 			
 				}
-				wait();
 			
 				// Establezco el mapa en el paquete usuario
 				paqueteUsuario.setIp(miIp);
