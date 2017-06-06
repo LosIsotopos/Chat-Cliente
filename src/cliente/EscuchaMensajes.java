@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
+import frames.MiChat;
 import frames.VentanaContactos;
 import mensajeria.Comando;
 import mensajeria.Paquete;
@@ -27,7 +28,7 @@ public class EscuchaMensajes extends Thread {
 	private ObjectInputStream entrada;
 	private final Gson gson = new Gson();
 
-	private Map<String, PaqueteUsuario> personajesConectados;
+//	private Map<String, PaqueteUsuario> personajesConectados;
 	protected static ArrayList<String> usuariosConectados = new ArrayList<String>();
 
 	/**
@@ -49,7 +50,7 @@ public class EscuchaMensajes extends Thread {
 			Paquete paquete;
 			PaqueteUsuario paqueteUsuario;
 			PaqueteMensaje paqueteMensaje;
-			personajesConectados = new HashMap<>();
+//			personajesConectados = new HashMap<>();
 
 			while (true) {
 				String objetoLeido = (String) entrada.readObject();
@@ -71,9 +72,20 @@ public class EscuchaMensajes extends Thread {
 //					VentanaContactos.actualizarLista(cliente);
 					actualizarLista(cliente);
 					break;
+				// ACA RECIBI EL MENSAJE DEL OTRO CLIENTE
 				case Comando.TALK:
-					paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
+					System.out.println("GG RAFA ESCUCHA MENSAJE");
+					cliente.setPaqueteMensaje(gson.fromJson(objetoLeido, PaqueteMensaje.class)) ;
+//					paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
+					System.out.println("UserEmisor: " + cliente.getPaqueteMensaje().getUserEmisor());
+					System.out.println("UserReceptor: " + cliente.getPaqueteMensaje().getUserReceptor());
+					System.out.println("Mensaje: " + cliente.getPaqueteMensaje().getMensaje());
+					
+					MiChat chat = new MiChat(cliente);
+					chat.setTitle(cliente.getPaqueteMensaje().getUserEmisor());
+					chat.setVisible(true);
 					break;
+					
 				case Comando.CHATALL:
 					paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
 					break;
@@ -112,9 +124,9 @@ public class EscuchaMensajes extends Thread {
 	 * 
 	 * @return devuelve el mapa con los personajes conectados
 	 */
-	public Map<String, PaqueteUsuario> getPersonajesConectados() {
-		return personajesConectados;
-	}
+//	public Map<String, PaqueteUsuario> getPersonajesConectados() {
+//		return personajesConectados;
+//	}
 
 	public static ArrayList<String> getUsuariosConectados() {
 		return usuariosConectados;

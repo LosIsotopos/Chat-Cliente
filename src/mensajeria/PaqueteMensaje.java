@@ -4,41 +4,40 @@ import java.io.Serializable;
 
 public class PaqueteMensaje extends Paquete implements Serializable, Cloneable {
 	
-		private int idEmisor;
-		private int idReceptor;
-		private String mensaje;
+		private String userEmisor;
+		private String userReceptor;
+		private String msj;
 
-		public PaqueteMensaje(int idEmisor, int idReceptor, String mensaje){
-			this.idEmisor = idEmisor;
-			this.idReceptor = idReceptor;
-			this.mensaje = mensaje;
-			setComando(Comando.TALK);
+		public PaqueteMensaje(){
 		}
 
 		public String getMensaje() {
-			return mensaje;
+			return msj;
 		}
 
 		public void setMensaje(String mensaje) {
-			this.mensaje = mensaje;
+			this.msj = mensaje;
 		}
 
-		public int getIdEmisor() {
-			return idEmisor;
+		public String getUserEmisor() {
+			return userEmisor;
 		}
 
-
-		public void setIdEmisor(int idEmisor) {
-			this.idEmisor = idEmisor;
+		public void setUserEmisor(String idEmisor) {
+			this.userEmisor = idEmisor;
 		}
 
-
-		public int getIdReceptor() {
-			return idReceptor;
+		public String getUserReceptor() {
+			return userReceptor;
 		}
 
-		public void setIdReceptor(int idReceptor){
-			this.idReceptor = idReceptor;
+		public void setUserReceptor(String idReceptor){
+			this.userReceptor = idReceptor;
 		}
-
+		
+		public Object clone() {
+			Object obj = null;
+			obj = super.clone();
+			return obj;
+		}
 }

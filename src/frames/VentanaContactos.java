@@ -100,7 +100,7 @@ public class VentanaContactos extends JFrame {
 			public void mouseClicked(MouseEvent arg0) {
 				if (arg0.getClickCount() == 2) {
 					if (cliente != null) {
-						MiChat chat = new MiChat();
+						MiChat chat = new MiChat(cliente);
 						chat.setTitle(list.getSelectedValue());
 						chat.setVisible(true);
 					}
@@ -156,7 +156,7 @@ public class VentanaContactos extends JFrame {
 		JButton botonMc = new JButton("Multichat");
 		botonMc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				MiChat chat = new MiChat();
+				MiChat chat = new MiChat(cliente);
 				chat.setTitle("Sala");
 				chat.setVisible(true);
 			}
@@ -195,7 +195,6 @@ public class VentanaContactos extends JFrame {
 
 	private void logIn(final Cliente cliente) {
 		cliente.setAccion(Comando.INICIOSESION);
-		System.out.println(jTFMiNombre.getText());
 		cliente.getPaqueteUsuario().setUsername(jTFMiNombre.getText());
 		synchronized (cliente) {
 			cliente.notify();

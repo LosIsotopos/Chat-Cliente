@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 
 import mensajeria.Comando;
 import mensajeria.Paquete;
+import mensajeria.PaqueteMensaje;
 import mensajeria.PaqueteUsuario;
 
 public class Cliente extends Thread {
@@ -22,6 +23,8 @@ public class Cliente extends Thread {
 	private ObjectInputStream entrada;
 	private ObjectOutputStream salida;
 	private PaqueteUsuario paqueteUsuario = new PaqueteUsuario();
+	private PaqueteMensaje paqueteMensaje = new PaqueteMensaje();
+
 	private int accion;
 	
 	private final Gson gson = new Gson();
@@ -69,20 +72,43 @@ public class Cliente extends Thread {
 					wait();
 					
 					switch (getAccion()) {
+					
 						case Comando.INICIOSESION:
 							paqueteUsuario.setComando(Comando.INICIOSESION);
-							System.out.println("INICIO SESION");
+							// Le envio el paquete al servidor
+							salida.writeObject(gson.toJson(paqueteUsuario));
 							break;
+							
+						case Comando.TALK:
+							paqueteMensaje.setComando(Comando.TALK);
+							
+							// Le envio el paquete al servidor
+							salida.writeObject(gson.toJson(paqueteMensaje));
+							
+							System.out.println("Envie mensaje");
+//							paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
+							break;
+							
+						case Comando.CHATALL:
+//							paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
+							break;
+							
 						case Comando.SALIR:
 							paqueteUsuario.setIp(getMiIp());
 							paqueteUsuario.setComando(Comando.SALIR);
+							// Le envio el paquete al servidor
+							salida.writeObject(gson.toJson(paqueteUsuario));
 							break;
+							
 						default:
 							break;
 					}
 			
 					// Le envio el paquete al servidor
-					salida.writeObject(gson.toJson(paqueteUsuario));
+					/**
+					 * ESTA ARRIBA EN CADA SWITCH PORQUE USO DOS PAQUETES DIFERENTES  
+					*/
+//					salida.writeObject(gson.toJson(paqueteUsuario));
 
 					// Recibo el paquete desde el servidor
 					String cadenaLeida = (String) entrada.readObject();
@@ -119,6 +145,15 @@ public class Cliente extends Thread {
 							PaqueteUsuario pU = new PaqueteUsuario();
 							pU.setComando(Comando.DESCONECTAR);
 							salida.writeObject(gson.toJson(pU, PaqueteUsuario.class));
+							break;
+							
+						case Comando.TALK:
+							System.out.println("NOPE CLIENTE AMIGUITO");
+//							paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
+							break;
+							
+						case Comando.CHATALL:
+//							paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
 							break;
 							
 						default:
@@ -183,4 +218,15 @@ public class Cliente extends Thread {
 	public PaqueteUsuario getPaqueteUsuario() {
 		return paqueteUsuario;
 	}
+	
+	public PaqueteMensaje getPaqueteMensaje() {
+		return paqueteMensaje;
+	}
+
+	public void setPaqueteMensaje(PaqueteMensaje fromJson) {
+		this.paqueteMensaje.setMensaje(fromJson.getMensaje());
+		this.paqueteMensaje.setUserEmisor(fromJson.getUserEmisor());
+		this.paqueteMensaje.setUserReceptor(fromJson.getUserReceptor());
+	}
+
 }
