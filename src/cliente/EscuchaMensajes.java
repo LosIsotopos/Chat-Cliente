@@ -5,10 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
+import frames.VentanaContactos;
 import mensajeria.Comando;
 import mensajeria.Paquete;
 import mensajeria.PaqueteDeUsuarios;
@@ -50,7 +52,6 @@ public class EscuchaMensajes extends Thread {
 			personajesConectados = new HashMap<>();
 
 			while (true) {
-
 				String objetoLeido = (String) entrada.readObject();
 
 				paquete = gson.fromJson(objetoLeido, Paquete.class);
@@ -60,8 +61,15 @@ public class EscuchaMensajes extends Thread {
 				case Comando.INICIOSESION:
 					usuariosConectados = (ArrayList<String>) gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
 					break;
+					
+				// CONEXION = SE CONECTO OTRO USUARIO, ENTONCES LE MANDO LA LISTA
+				// A TODOS LOS USUARIOS ANTERIORES A EL
+					
 				case Comando.CONEXION:
 					usuariosConectados = (ArrayList<String>) gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
+					cliente.getPaqueteUsuario().setListaDeConectados(usuariosConectados);
+//					VentanaContactos.actualizarLista(cliente);
+					actualizarLista(cliente);
 					break;
 				case Comando.TALK:
 					paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
@@ -77,8 +85,30 @@ public class EscuchaMensajes extends Thread {
 		}
 	}
 
+	private void actualizarLista(final Cliente cliente) {
+		DefaultListModel<String> modelo = new DefaultListModel<String>();
+		synchronized (cliente) {
+			try {
+				cliente.wait(300);
+				VentanaContactos.getList().removeAll();
+				if (cliente.getPaqueteUsuario().getListaDeConectados() != null) {
+					cliente.getPaqueteUsuario().getListaDeConectados().remove(cliente.getPaqueteUsuario().getUsername());
+					for (String cad : cliente.getPaqueteUsuario().getListaDeConectados()) {
+						modelo.addElement(cad);
+					}
+					VentanaContactos.getLblNumeroConectados().setText(String.valueOf(modelo.getSize()));
+//					VentanaContactos.lblNumeroConectados.setText(String.valueOf(modelo.getSize()));
+					VentanaContactos.getList().setModel(modelo);
+//					VentanaContactos.list.setModel(modelo);
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	/**
-	 * Pide los personajes conectados
+	 * Pide los usuarios conectados
 	 * 
 	 * @return devuelve el mapa con los personajes conectados
 	 */

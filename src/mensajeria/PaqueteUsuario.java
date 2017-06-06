@@ -11,7 +11,7 @@ public class PaqueteUsuario extends Paquete implements Serializable, Cloneable {
 	private List<String> listaDeConectados;
 
 	public PaqueteUsuario(){
-		
+		estado = true;
 	}
 
 	public List<String> getListaDeConectados() {
@@ -25,6 +25,7 @@ public class PaqueteUsuario extends Paquete implements Serializable, Cloneable {
 	public PaqueteUsuario(String user){
 		username = user;
 		inicioSesion = false;
+		estado = true;
 	}
 
 	public String getUsername() {

@@ -1,6 +1,5 @@
 package cliente;
 
-import java.awt.EventQueue;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,7 +12,6 @@ import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
-import frames.InterfaceLogeo;
 import mensajeria.Comando;
 import mensajeria.Paquete;
 import mensajeria.PaqueteUsuario;
@@ -66,33 +64,29 @@ public class Cliente extends Thread {
 				// Creo el paquete que le voy a enviar al servidor
 				paqueteUsuario = new PaqueteUsuario();
 				while (!paqueteUsuario.isInicioSesion()) {
-					// Creo los paquetes que le voy a enviar al servidor
-//					paqueteUsuario = new PaqueteUsuario();
-			
+					
 					// Espero a que el usuario seleccione alguna accion
 					wait();
-			
+					
 					switch (getAccion()) {
-			
-					case Comando.INICIOSESION:
-						paqueteUsuario.setComando(Comando.INICIOSESION);
-						System.out.println("INICIO SESION");
-						break;
-					case Comando.SALIR:
-						paqueteUsuario.setIp(getMiIp());
-						paqueteUsuario.setComando(Comando.SALIR);
-						break;
-					default:
-						break;
+						case Comando.INICIOSESION:
+							paqueteUsuario.setComando(Comando.INICIOSESION);
+							System.out.println("INICIO SESION");
+							break;
+						case Comando.SALIR:
+							paqueteUsuario.setIp(getMiIp());
+							paqueteUsuario.setComando(Comando.SALIR);
+							break;
+						default:
+							break;
 					}
 			
 					// Le envio el paquete al servidor
 					salida.writeObject(gson.toJson(paqueteUsuario));
-//					System.out.println("ENVIE PAQUETE");
+
 					// Recibo el paquete desde el servidor
 					String cadenaLeida = (String) entrada.readObject();
 					Paquete paquete = gson.fromJson(cadenaLeida, Paquete.class);
-//					System.out.println("RECIBI PAQUETE");
 			
 					switch (paquete.getComando()) {
 			
@@ -101,7 +95,7 @@ public class Cliente extends Thread {
 				
 								// El usuario ya inicio sesión
 								paqueteUsuario.setInicioSesion(true);
-				
+								
 								// Recibo el paquete personaje con los datos
 								this.paqueteUsuario = gson.fromJson(cadenaLeida, PaqueteUsuario.class);
 				
@@ -131,13 +125,13 @@ public class Cliente extends Thread {
 							break;
 						}
 //					wait();
-			
 				}
 			
 				// Establezco el mapa en el paquete usuario
 				paqueteUsuario.setIp(miIp);
 				salida.writeObject(gson.toJson(paqueteUsuario));
 				notify();
+				
 			} catch (IOException | InterruptedException | ClassNotFoundException e) {
 				JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor durante el inicio de sesión.");
 				System.exit(1);
@@ -145,7 +139,6 @@ public class Cliente extends Thread {
 			}
 		}
 	}
-
 
 	public void setAccion(int accion) {
 		this.accion = accion;

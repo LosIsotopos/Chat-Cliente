@@ -7,9 +7,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.geom.FlatteningPathIterator;
-import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -31,16 +28,16 @@ import mensajeria.PaqueteUsuario;
 
 //public class VentanaContactos extends JFrame {
 public class VentanaContactos extends JFrame {
-
-	private JPanel contentPane;
 	private String user = null;
 	private static Cliente cliente;
-	public static DefaultListModel<String> modelo = new DefaultListModel<String>();
-	public static JList<String> list = new JList<String>();
-	private PaqueteUsuario paqueteUsuario;
 	private boolean flagConexion = false;
+	private PaqueteUsuario paqueteUsuario;
+	
+	private JPanel contentPane;
+	private DefaultListModel<String> modelo = new DefaultListModel<String>();
+	private static JList<String> list = new JList<String>();
 	private JTextField jTFMiNombre;
-	private JLabel lblNumeroConectados = new JLabel("");
+	private static JLabel lblNumeroConectados = new JLabel("");
 
 	/**
 	 * Launch the application.
@@ -56,10 +53,6 @@ public class VentanaContactos extends JFrame {
 				}
 			}
 		});
-//		while(true) {
-//			System.out.println("2 VEZ");
-//			actualizarLista(cliente);
-//		}
 	}
 
 	/**
@@ -92,7 +85,7 @@ public class VentanaContactos extends JFrame {
 				}
 			}
 		});
-
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
@@ -108,8 +101,6 @@ public class VentanaContactos extends JFrame {
 				if (arg0.getClickCount() == 2) {
 					if (cliente != null) {
 						MiChat chat = new MiChat();
-						EscuchaMensajes em = new EscuchaMensajes(cliente);
-						em.start();
 						chat.setTitle(list.getSelectedValue());
 						chat.setVisible(true);
 					}
@@ -143,13 +134,13 @@ public class VentanaContactos extends JFrame {
 								jTFMiNombre.setText(user);
 								cliente = new Cliente();
 								cliente.start();
-								logIn(cliente);
-//								if(cliente.getPaqueteUsuario().isInicioSesion()){
-//							         actualizarLista(cliente);
-//							         botonConectar.setEnabled(false);
-//							    }
+								logIn(cliente);			
 								
 								actualizarLista(cliente);
+								
+								EscuchaMensajes em = new EscuchaMensajes(cliente);
+								em.start();
+								
 								botonConectar.setEnabled(false);
 							}
 						}
@@ -201,38 +192,45 @@ public class VentanaContactos extends JFrame {
 	}
 
 	private void logIn(final Cliente cliente) {
-//		 synchronized (this) {
-			cliente.setAccion(Comando.INICIOSESION);
-			System.out.println(jTFMiNombre.getText());
-			cliente.getPaqueteUsuario().setUsername(jTFMiNombre.getText());
-			synchronized (cliente) {
-				cliente.notify();
-			}
-//		}
+		cliente.setAccion(Comando.INICIOSESION);
+		System.out.println(jTFMiNombre.getText());
+		cliente.getPaqueteUsuario().setUsername(jTFMiNombre.getText());
+		synchronized (cliente) {
+			cliente.notify();
+		}
 	}
 
-	public void actualizarLista(final Cliente cliente) {
+	private void actualizarLista(final Cliente cliente) {
 		if(cliente != null) {
-		synchronized (cliente) {
-			try {
-				cliente.wait(300);
-				if (cliente.getPaqueteUsuario().getListaDeConectados() != null) {
-					cliente.getPaqueteUsuario().getListaDeConectados().remove(cliente.getPaqueteUsuario().getUsername());
-					for (String cad : cliente.getPaqueteUsuario().getListaDeConectados()) {
-						modelo.addElement(cad);
+			synchronized (cliente) {
+				try {
+					cliente.wait(300);
+					modelo.removeAllElements();
+					if (cliente.getPaqueteUsuario().getListaDeConectados() != null) {
+						cliente.getPaqueteUsuario().getListaDeConectados().remove(cliente.getPaqueteUsuario().getUsername());
+						for (String cad : cliente.getPaqueteUsuario().getListaDeConectados()) {
+							modelo.addElement(cad);
+						}
+						lblNumeroConectados.setText(String.valueOf(modelo.getSize()));
+						list.setModel(modelo);
 					}
-					lblNumeroConectados.setText(String.valueOf(modelo.getSize()));
-					list.setModel(modelo);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
 				}
-			} catch (InterruptedException e) {
-				e.printStackTrace();
 			}
 		}
-		}//fin if cliente rancio
 	}
-
+	
 	public PaqueteUsuario getPaqueteUsuario() {
 		return paqueteUsuario;
+	}
+	
+	public static JLabel getLblNumeroConectados() {
+		return lblNumeroConectados;
+	}
+	
+	public static JList<String> getList() {
+		return list;
 	}
 
 }
