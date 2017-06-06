@@ -134,7 +134,9 @@ public class VentanaContactos extends JFrame {
 								jTFMiNombre.setText(user);
 								cliente = new Cliente();
 								cliente.start();
-								logIn(cliente);			
+		                        while(cliente.getState() != Thread.State.WAITING) {	
+		                        }
+								logIn(cliente);		
 								
 								actualizarLista(cliente);
 								
@@ -203,19 +205,14 @@ public class VentanaContactos extends JFrame {
 	private void actualizarLista(final Cliente cliente) {
 		if(cliente != null) {
 			synchronized (cliente) {
-				try {
-					cliente.wait(300);
-					modelo.removeAllElements();
-					if (cliente.getPaqueteUsuario().getListaDeConectados() != null) {
-						cliente.getPaqueteUsuario().getListaDeConectados().remove(cliente.getPaqueteUsuario().getUsername());
-						for (String cad : cliente.getPaqueteUsuario().getListaDeConectados()) {
-							modelo.addElement(cad);
-						}
-						lblNumeroConectados.setText(String.valueOf(modelo.getSize()));
-						list.setModel(modelo);
+				modelo.removeAllElements();
+				if (cliente.getPaqueteUsuario().getListaDeConectados() != null) {
+					cliente.getPaqueteUsuario().getListaDeConectados().remove(cliente.getPaqueteUsuario().getUsername());
+					for (String cad : cliente.getPaqueteUsuario().getListaDeConectados()) {
+						modelo.addElement(cad);
 					}
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+					lblNumeroConectados.setText(String.valueOf(modelo.getSize()));
+					list.setModel(modelo);
 				}
 			}
 		}
