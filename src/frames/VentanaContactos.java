@@ -22,7 +22,7 @@ import javax.swing.WindowConstants;
 import javax.swing.border.EmptyBorder;
 
 import cliente.Cliente;
-import cliente.EscuchaMensajes;
+import cliente.EscuchaServer;
 import mensajeria.Comando;
 import mensajeria.PaqueteUsuario;
 
@@ -30,7 +30,6 @@ import mensajeria.PaqueteUsuario;
 public class VentanaContactos extends JFrame {
 	private String user = null;
 	private Cliente cliente;
-	private boolean flagConexion = false;
 	private PaqueteUsuario paqueteUsuario;
 	
 	private JPanel contentPane;
@@ -101,6 +100,7 @@ public class VentanaContactos extends JFrame {
 				if (arg0.getClickCount() == 2) {
 					if (cliente != null) {
 						MiChat chat = new MiChat(cliente);
+						cliente.getChatsActivos().put(list.getSelectedValue(), chat);
 						chat.setTitle(list.getSelectedValue());
 						chat.setVisible(true);
 					}
@@ -140,7 +140,7 @@ public class VentanaContactos extends JFrame {
 								
 								actualizarLista(cliente);
 								
-								EscuchaMensajes em = new EscuchaMensajes(cliente);
+								EscuchaServer em = new EscuchaServer(cliente);
 								em.start();
 								
 								botonConectar.setEnabled(false);

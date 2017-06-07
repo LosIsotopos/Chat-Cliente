@@ -7,6 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
 import cliente.Cliente;
+import cliente.EscuchaServer;
 import mensajeria.Comando;
 
 import javax.swing.JScrollPane;
@@ -16,6 +17,7 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.ScrollPaneConstants;
 
@@ -31,6 +33,7 @@ public class MiChat extends JFrame {
 	
 	/**
 	 * Create the frame.
+	 * @param chatsActivos 
 	 */
 	public MiChat(final Cliente cliente) {
 		this.client = cliente;
@@ -104,6 +107,7 @@ public class MiChat extends JFrame {
 		});
 		enviar.setBounds(334, 225, 81, 23);
 		contentPane.add(enviar);
+		
 		//SI CIERRO VENTANA
 		addWindowListener(new WindowAdapter() {
 			@Override
@@ -118,8 +122,10 @@ public class MiChat extends JFrame {
 	
 	private void mostrarVentanaConfirmacion() {
 		int res = JOptionPane.showConfirmDialog(this, "¿Desea salir de la sesión de chat?", "Confirmación", JOptionPane.YES_NO_OPTION);
-		if(res == JOptionPane.YES_OPTION)
+		if(res == JOptionPane.YES_OPTION) {
+			client.getChatsActivos().remove(getTitle());
 			dispose();
+		}
 	}
 	
 	public JTextArea getChat() {

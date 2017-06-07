@@ -6,12 +6,16 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
 import com.google.gson.Gson;
 
+import frames.MiChat;
 import mensajeria.Comando;
 import mensajeria.Paquete;
 import mensajeria.PaqueteMensaje;
@@ -24,6 +28,8 @@ public class Cliente extends Thread {
 	private ObjectOutputStream salida;
 	private PaqueteUsuario paqueteUsuario = new PaqueteUsuario();
 	private PaqueteMensaje paqueteMensaje = new PaqueteMensaje();
+//	private ArrayList<String> chatsActivos = new ArrayList<String>();
+	private Map<String, MiChat> chatsActivos = new HashMap<>();
 
 	private int accion;
 	
@@ -69,9 +75,7 @@ public class Cliente extends Thread {
 				while (!paqueteUsuario.isInicioSesion()) {
 					
 					// Espero a que el usuario seleccione alguna accion
-					System.out.println("ESPERANDO A QUE EL USUARIO HAGA ALGO");
 					wait();
-					System.out.println("EL USUARIO HIZO ALGO");
 					
 					switch (getAccion()) {
 					
@@ -87,8 +91,6 @@ public class Cliente extends Thread {
 							// Le envio el paquete al servidor
 							salida.writeObject(gson.toJson(paqueteMensaje));
 							
-							System.out.println("Envie mensaje");
-//							paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
 							break;
 							
 						case Comando.CHATALL:
@@ -107,69 +109,6 @@ public class Cliente extends Thread {
 					}
 					
 					salida.flush();
-					
-					
-					// Le envio el paquete al servidor
-					/**
-					 * ESTA ARRIBA EN CADA SWITCH PORQUE USO DOS PAQUETES DIFERENTES  
-					*/
-//					salida.writeObject(gson.toJson(paqueteUsuario));
-
-					// Recibo el paquete desde el servidor
-					System.out.println("ESPERANDO LEER EN CLIENTE");
-					String cadenaLeida = (String) entrada.readObject();
-					System.out.println("LEI EN CLIENTE");
-					
-					Paquete paquete = gson.fromJson(cadenaLeida, Paquete.class);
-			
-					switch (paquete.getComando()) {
-			
-						case Comando.INICIOSESION:
-							if (paquete.getMensaje().equals(Paquete.msjExito)) {
-				
-								// El usuario ya inicio sesión
-								paqueteUsuario.setInicioSesion(true);
-								
-								// Recibo el paquete personaje con los datos
-								this.paqueteUsuario = gson.fromJson(cadenaLeida, PaqueteUsuario.class);
-				
-							} else {
-								if (paquete.getMensaje().equals(Paquete.msjFracaso)) {
-									JOptionPane.showMessageDialog(null, "El usuario ya se encuentra logeado.");
-								}
-								// El usuario no pudo iniciar sesión
-								paqueteUsuario.setInicioSesion(false);
-							}
-							break;
-				
-						case Comando.SALIR:
-							// El usuario no pudo iniciar sesión
-							paqueteUsuario.setInicioSesion(false);
-							salida.writeObject(gson.toJson(new Paquete(Comando.DESCONECTAR), Paquete.class));
-							cliente.close();
-							break;
-							
-						case Comando.DESCONECTAR:
-							PaqueteUsuario pU = new PaqueteUsuario();
-							pU.setComando(Comando.DESCONECTAR);
-							salida.writeObject(gson.toJson(pU, PaqueteUsuario.class));
-							break;
-							
-						case Comando.TALK:
-							System.out.println("NOPE CLIENTE AMIGUITO");
-//							paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
-							break;
-							
-						case Comando.CHATALL:
-//							paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
-							break;
-							
-						default:
-							break;
-						}
-					
-					salida.flush();
-//					wait();
 				}
 			
 				// Establezco el mapa en el paquete usuario
@@ -177,7 +116,7 @@ public class Cliente extends Thread {
 				salida.writeObject(gson.toJson(paqueteUsuario));
 				notify();
 				
-			} catch (IOException | InterruptedException | ClassNotFoundException e) {
+			} catch (IOException | InterruptedException e) {
 				JOptionPane.showMessageDialog(null, "Fallo la conexión del Cliente.");
 				e.printStackTrace();
 				System.exit(1);
@@ -239,4 +178,11 @@ public class Cliente extends Thread {
 		this.paqueteMensaje.setUserReceptor(fromJson.getUserReceptor());
 	}
 
+	public Map<String, MiChat> getChatsActivos() {
+		return chatsActivos;
+	}
+
+	public void setChatsActivos(Map<String, MiChat> chatsActivos) {
+		this.chatsActivos = chatsActivos;
+	}
 }
