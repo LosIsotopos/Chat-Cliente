@@ -1,10 +1,7 @@
 package cliente;
 
 import java.io.ObjectInputStream;
-import java.net.Socket;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
@@ -88,6 +85,7 @@ public class EscuchaServer extends Thread {
 							cliente.getChatsActivos().put(cliente.getPaqueteMensaje().getUserEmisor(), chat);
 						}
 						cliente.getChatsActivos().get(cliente.getPaqueteMensaje().getUserEmisor()).getChat().append(cliente.getPaqueteMensaje().getUserEmisor() + ": "  + cliente.getPaqueteMensaje().getMensaje() + "\n");
+						cliente.getChatsActivos().get(cliente.getPaqueteMensaje().getUserEmisor()).getTexto().grabFocus();
 						break;
 						
 					case Comando.CHATALL:
@@ -103,7 +101,7 @@ public class EscuchaServer extends Thread {
 							VentanaContactos.getBotonMc().setEnabled(false);
 						}
 						cliente.getChatsActivos().get("Sala").getChat().append(cliente.getPaqueteMensaje().getUserEmisor() + ": "  + cliente.getPaqueteMensaje().getMensaje() + "\n");
-						
+						cliente.getChatsActivos().get("Sala").getTexto().grabFocus();
 						break;
 				}
 			}

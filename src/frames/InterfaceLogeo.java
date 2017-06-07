@@ -1,15 +1,13 @@
 package frames;
-import java.awt.BorderLayout;
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.swing.border.EmptyBorder;
-import javax.swing.JButton;
-import javax.swing.JTextField;
-import javax.swing.JLabel;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 public class InterfaceLogeo extends JFrame {
 
@@ -68,6 +66,14 @@ public class InterfaceLogeo extends JFrame {
 		contentPane.add(btnCancelar);
 		
 		textField = new JTextField();
+		textField.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(!textField.getText().equals("")) {
+					nombreUsuario = textField.getText();
+				}
+				dispose();
+			}
+		});
 		textField.setBounds(139, 13, 116, 22);
 		contentPane.add(textField);
 		textField.setColumns(10);
