@@ -48,6 +48,8 @@ public class EscuchaServer extends Thread {
 			Paquete paquete;
 			PaqueteUsuario paqueteUsuario;
 			PaqueteMensaje paqueteMensaje;
+			ArrayList<String> usuariosAntiguos = new ArrayList<String>();
+			ArrayList<String> diferenciaContactos = new ArrayList<String>();
 
 			String objetoLeido;
 			while (true) {
@@ -61,6 +63,7 @@ public class EscuchaServer extends Thread {
 				
 					case Comando.INICIOSESION:
 						usuariosConectados = (ArrayList<String>) gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
+						
 						break;
 						
 					// CONEXION = SE CONECTO OTRO USUARIO, ENTONCES LE MANDO LA LISTA
@@ -68,6 +71,21 @@ public class EscuchaServer extends Thread {
 						
 					case Comando.CONEXION:
 						usuariosConectados = (ArrayList<String>) gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
+						for (String usuario : usuariosConectados) {
+							if(!usuariosAntiguos.contains(usuario)) {
+								usuariosAntiguos.add(usuario);
+							}
+						}
+						diferenciaContactos = new ArrayList<String>(usuariosAntiguos);
+						diferenciaContactos.removeAll(usuariosConectados);
+						if(!diferenciaContactos.isEmpty()) {
+							for (String usuario : diferenciaContactos) {
+								if(cliente.getChatsActivos().containsKey(usuario)) {
+									cliente.getChatsActivos().get(usuario).getChat().append("El usuario: " + usuario + " se ha desconectado\n");
+								}
+								usuariosAntiguos.remove(usuario);
+							}
+						}
 						cliente.getPaqueteUsuario().setListaDeConectados(usuariosConectados);
 						actualizarLista(cliente);
 						break;
