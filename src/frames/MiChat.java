@@ -69,7 +69,11 @@ public class MiChat extends JFrame {
 					chat.append("Me: " + texto.getText() + "\n");
 					
 					// MANDO EL COMANDO PARA QUE ENVIE EL MSJ
-					cliente.setAccion(Comando.TALK);
+					if(getTitle() != "Sala"){
+						cliente.setAccion(Comando.TALK);
+					} else {
+						cliente.setAccion(Comando.CHATALL);
+					}
 					
 					cliente.getPaqueteMensaje().setUserEmisor(cliente.getPaqueteUsuario().getUsername());
 					cliente.getPaqueteMensaje().setUserReceptor(getTitle());
@@ -91,7 +95,11 @@ public class MiChat extends JFrame {
 					chat.append("Me: " + texto.getText() + "\n");
 					
 					// MANDO EL COMANDO PARA QUE ENVIE EL MSJ
-					cliente.setAccion(Comando.TALK);
+					if(getTitle() != "Sala"){
+						cliente.setAccion(Comando.TALK);
+					} else {
+						cliente.setAccion(Comando.CHATALL);
+					}
 					
 					cliente.getPaqueteMensaje().setUserEmisor(cliente.getPaqueteUsuario().getUsername());
 					cliente.getPaqueteMensaje().setUserReceptor(getTitle());

@@ -79,28 +79,31 @@ public class EscuchaServer extends Thread {
 						
 						cliente.setPaqueteMensaje((PaqueteMensaje) gson.fromJson(objetoLeido, PaqueteMensaje.class));
 						
-//						if(!(chatsActivos.contains(cliente.getPaqueteMensaje().getUserEmisor()) && chatsActivos.contains(cliente.getPaqueteMensaje().getUserReceptor()))) {
 							// PARA SACAR EL STATIC LE MANDAMOS LA LISTA AL CHAT
 						if(!(cliente.getChatsActivos().containsKey(cliente.getPaqueteMensaje().getUserEmisor()))) {	
-//							chat = new MiChat(cliente, chatsActivos);
 							chat = new MiChat(cliente);
 							
 							chat.setTitle(cliente.getPaqueteMensaje().getUserEmisor());
 							chat.setVisible(true);
 							
 							cliente.getChatsActivos().put(cliente.getPaqueteMensaje().getUserEmisor(), chat);
-//							cliente.getChatsActivos().put(cliente.getPaqueteMensaje().getUserReceptor());
-//							chatsActivos.add(cliente.getPaqueteMensaje().getUserEmisor());
-//							chatsActivos.add(cliente.getPaqueteMensaje().getUserReceptor());
-//						}
 						}
 						cliente.getChatsActivos().get(cliente.getPaqueteMensaje().getUserEmisor()).getChat().append(cliente.getPaqueteMensaje().getUserEmisor() + ": "  + cliente.getPaqueteMensaje().getMensaje() + "\n");
-
-//						chat.getChat().append(cliente.getPaqueteMensaje().getUserEmisor() + ": "  + cliente.getPaqueteMensaje().getMensaje() + "\n");
 						break;
 						
 					case Comando.CHATALL:
-						paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
+						
+						cliente.setPaqueteMensaje((PaqueteMensaje) gson.fromJson(objetoLeido, PaqueteMensaje.class));
+						if(!cliente.getChatsActivos().containsKey("Sala")) {	
+							chat = new MiChat(cliente);
+							
+							chat.setTitle("Sala");
+							chat.setVisible(true);
+							
+							cliente.getChatsActivos().put("Sala", chat);
+						}
+						cliente.getChatsActivos().get("Sala").getChat().append(cliente.getPaqueteMensaje().getUserEmisor() + ": "  + cliente.getPaqueteMensaje().getMensaje() + "\n");
+						
 						break;
 				}
 			}

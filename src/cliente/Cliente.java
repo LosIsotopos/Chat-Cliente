@@ -38,20 +38,11 @@ public class Cliente extends Thread {
 	private String ip;
 	private int puerto;
 	
-	public Cliente() {
-		Scanner sc;
-	
-		try {
-			sc = new Scanner(new File("config.txt"));
-			ip = sc.nextLine();
-			puerto = sc.nextInt();
-			sc.close();
-		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(null, "No se ha encontrado el "
-					+ "archivo de configuración config.txt");
-			e.printStackTrace();
-		}
-	
+	public Cliente(String newIp, int newPort) {
+		
+		this.ip = newIp;
+		this.puerto = newPort;
+		
 		try {
 			cliente = new Socket(ip, puerto);
 			miIp = cliente.getInetAddress().getHostAddress();
@@ -94,7 +85,10 @@ public class Cliente extends Thread {
 							break;
 							
 						case Comando.CHATALL:
-//							paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
+							paqueteMensaje.setComando(Comando.CHATALL);
+							
+							// Le envio el paquete al servidor
+							salida.writeObject(gson.toJson(paqueteMensaje));
 							break;
 							
 						case Comando.SALIR:

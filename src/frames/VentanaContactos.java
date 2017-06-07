@@ -1,6 +1,7 @@
 package frames;
 
 import java.awt.EventQueue;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -37,7 +38,10 @@ public class VentanaContactos extends JFrame {
 	private static JList<String> list = new JList<String>();
 	private JTextField jTFMiNombre;
 	private static JLabel lblNumeroConectados = new JLabel("");
-
+	
+	private String ipScanned = "localhost";
+	private int puertoScanned = 9999;
+	
 	/**
 	 * Launch the application.
 	 */
@@ -63,7 +67,20 @@ public class VentanaContactos extends JFrame {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		setBounds(100, 100, 327, 335);
 		setLocationRelativeTo(null);
-
+		
+		JTextField ip = new JTextField(5);
+		JTextField puerto = new JTextField(5);
+		
+		ip.setText(ipScanned);
+		puerto.setText(String.valueOf(puertoScanned));
+		
+		JPanel myPanel = new JPanel();
+		myPanel.setLayout(new GridLayout(2,2));
+		myPanel.add(new JLabel("IP: "));
+		myPanel.add(ip);
+		myPanel.add(new JLabel("PUERTO: "));
+		myPanel.add(puerto);
+		
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent arg0) {
@@ -108,6 +125,20 @@ public class VentanaContactos extends JFrame {
 			}
 		});
 
+		JButton botonMc = new JButton("Multichat");
+		botonMc.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(Integer.valueOf(lblNumeroConectados.getText()) != 0) {
+					MiChat chat = new MiChat(cliente);
+					cliente.getChatsActivos().put("Sala", chat);
+					chat.setTitle("Sala");
+					chat.setVisible(true);
+				}
+			}
+		});
+		botonMc.setBounds(220, 264, 89, 23);
+		contentPane.add(botonMc);
+		
 		jTFMiNombre = new JTextField();
 		jTFMiNombre.setHorizontalAlignment(SwingConstants.LEFT);
 		jTFMiNombre.setEditable(false);
@@ -122,47 +153,42 @@ public class VentanaContactos extends JFrame {
 		botonConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (user == null) {
-					InterfaceLogeo interfaceLogeo = new InterfaceLogeo();
-					interfaceLogeo.setTitle("Logeo");
-					interfaceLogeo.setVisible(true);
-					interfaceLogeo.addWindowListener(new WindowAdapter() {
-						@Override
-						public void windowClosed(WindowEvent e) {
-							user = interfaceLogeo.getNombreUsuario();
-							if (user != null) {
-								setTitle("User: " + user);
-								jTFMiNombre.setText(user);
-								cliente = new Cliente();
-								cliente.start();
-		                        while(cliente.getState() != Thread.State.WAITING) {	
-		                        }
-								logIn(cliente);		
-								
-								actualizarLista(cliente);
-								
-								EscuchaServer em = new EscuchaServer(cliente);
-								em.start();
-								
-								botonConectar.setEnabled(false);
+					int result = JOptionPane.showConfirmDialog(null, myPanel, 
+				               "Please Enter Values", JOptionPane.OK_CANCEL_OPTION);
+					if (result == JOptionPane.OK_OPTION) {
+						ipScanned = ip.getText();
+						puertoScanned = Integer.valueOf(puerto.getText());
+						InterfaceLogeo interfaceLogeo = new InterfaceLogeo();
+						interfaceLogeo.setTitle("Logeo");
+						interfaceLogeo.setVisible(true);
+						interfaceLogeo.addWindowListener(new WindowAdapter() {
+							@Override
+							public void windowClosed(WindowEvent e) {
+								user = interfaceLogeo.getNombreUsuario();
+								if (user != null) {
+									setTitle("User: " + user);
+									jTFMiNombre.setText(user);
+									cliente = new Cliente(ipScanned, puertoScanned);
+									cliente.start();
+			                        while(cliente.getState() != Thread.State.WAITING) {	
+			                        }
+									logIn(cliente);		
+									
+									actualizarLista(cliente);
+									
+									EscuchaServer em = new EscuchaServer(cliente);
+									em.start();
+									
+									botonConectar.setEnabled(false);
+								}
 							}
-						}
-					});
+						});
+					}
 				}
 			}
 		});
 		botonConectar.setBounds(10, 264, 89, 23);
 		contentPane.add(botonConectar);
-
-		JButton botonMc = new JButton("Multichat");
-		botonMc.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				MiChat chat = new MiChat(cliente);
-				chat.setTitle("Sala");
-				chat.setVisible(true);
-			}
-		});
-		botonMc.setBounds(220, 264, 89, 23);
-		contentPane.add(botonMc);
 
 		JLabel lblUsuariosConectados = new JLabel("Usuarios Conectados:");
 		lblUsuariosConectados.setBounds(10, 235, 138, 16);
