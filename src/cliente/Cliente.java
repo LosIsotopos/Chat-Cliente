@@ -91,9 +91,9 @@ public class Cliente extends Thread {
 							salida.writeObject(gson.toJson(paqueteMensaje));
 							break;
 							
-						case Comando.SALIR:
+						case Comando.DESCONECTAR:
 							paqueteUsuario.setIp(getMiIp());
-							paqueteUsuario.setComando(Comando.SALIR);
+							paqueteUsuario.setComando(Comando.DESCONECTAR);
 							// Le envio el paquete al servidor
 							salida.writeObject(gson.toJson(paqueteUsuario));
 							break;

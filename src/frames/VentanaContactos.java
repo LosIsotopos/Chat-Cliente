@@ -38,7 +38,8 @@ public class VentanaContactos extends JFrame {
 	private static JList<String> list = new JList<String>();
 	private JTextField jTFMiNombre;
 	private static JLabel lblNumeroConectados = new JLabel("");
-	
+	private static JButton botonMc;
+
 	private String ipScanned = "localhost";
 	private int puertoScanned = 9999;
 	
@@ -91,9 +92,6 @@ public class VentanaContactos extends JFrame {
 							// deslogeo
 							cliente.setAccion(Comando.DESCONECTAR);
 							cliente.notify();
-							// Salir para que aparezca que tal IP deslogeo
-							cliente.setAccion(Comando.SALIR);
-							cliente.notify();
 						}
 						setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 					}
@@ -125,7 +123,7 @@ public class VentanaContactos extends JFrame {
 			}
 		});
 
-		JButton botonMc = new JButton("Multichat");
+		botonMc = new JButton("Multichat");
 		botonMc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(Integer.valueOf(lblNumeroConectados.getText()) != 0) {
@@ -133,6 +131,7 @@ public class VentanaContactos extends JFrame {
 					cliente.getChatsActivos().put("Sala", chat);
 					chat.setTitle("Sala");
 					chat.setVisible(true);
+					botonMc.setEnabled(false);
 				}
 			}
 		});
@@ -207,7 +206,6 @@ public class VentanaContactos extends JFrame {
 		JLabel label = new JLabel("");
 		label.setBounds(130, 267, 56, 16);
 		contentPane.add(label);
-
 	}
 
 	private boolean abrirVentanaConfirmaSalir() {
@@ -254,5 +252,8 @@ public class VentanaContactos extends JFrame {
 	public static JList<String> getList() {
 		return list;
 	}
-
+	
+	public static JButton getBotonMc() {
+		return botonMc;
+	}
 }

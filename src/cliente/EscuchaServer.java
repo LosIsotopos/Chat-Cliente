@@ -79,7 +79,6 @@ public class EscuchaServer extends Thread {
 						
 						cliente.setPaqueteMensaje((PaqueteMensaje) gson.fromJson(objetoLeido, PaqueteMensaje.class));
 						
-							// PARA SACAR EL STATIC LE MANDAMOS LA LISTA AL CHAT
 						if(!(cliente.getChatsActivos().containsKey(cliente.getPaqueteMensaje().getUserEmisor()))) {	
 							chat = new MiChat(cliente);
 							
@@ -101,6 +100,7 @@ public class EscuchaServer extends Thread {
 							chat.setVisible(true);
 							
 							cliente.getChatsActivos().put("Sala", chat);
+							VentanaContactos.getBotonMc().setEnabled(false);
 						}
 						cliente.getChatsActivos().get("Sala").getChat().append(cliente.getPaqueteMensaje().getUserEmisor() + ": "  + cliente.getPaqueteMensaje().getMensaje() + "\n");
 						
