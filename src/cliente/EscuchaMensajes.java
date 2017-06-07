@@ -51,44 +51,51 @@ public class EscuchaMensajes extends Thread {
 			PaqueteUsuario paqueteUsuario;
 			PaqueteMensaje paqueteMensaje;
 //			personajesConectados = new HashMap<>();
-
+			String objetoLeido;
 			while (true) {
-				String objetoLeido = (String) entrada.readObject();
-
+//				String objetoLeido = (String) entrada.readObject();
+				System.out.println("LEYENDO...");
+				objetoLeido = (String) entrada.readObject();
+				System.out.println("//////////LEI///////////////");
 				paquete = gson.fromJson(objetoLeido, Paquete.class);
 
 				switch (paquete.getComando()) {
 				
-				case Comando.INICIOSESION:
-					usuariosConectados = (ArrayList<String>) gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
-					break;
-					
-				// CONEXION = SE CONECTO OTRO USUARIO, ENTONCES LE MANDO LA LISTA
-				// A TODOS LOS USUARIOS ANTERIORES A EL
-					
-				case Comando.CONEXION:
-					usuariosConectados = (ArrayList<String>) gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
-					cliente.getPaqueteUsuario().setListaDeConectados(usuariosConectados);
-//					VentanaContactos.actualizarLista(cliente);
-					actualizarLista(cliente);
-					break;
-				// ACA RECIBI EL MENSAJE DEL OTRO CLIENTE
-				case Comando.TALK:
-					System.out.println("GG RAFA ESCUCHA MENSAJE");
-					cliente.setPaqueteMensaje(gson.fromJson(objetoLeido, PaqueteMensaje.class)) ;
-//					paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
-					System.out.println("UserEmisor: " + cliente.getPaqueteMensaje().getUserEmisor());
-					System.out.println("UserReceptor: " + cliente.getPaqueteMensaje().getUserReceptor());
-					System.out.println("Mensaje: " + cliente.getPaqueteMensaje().getMensaje());
-					
-					MiChat chat = new MiChat(cliente);
-					chat.setTitle(cliente.getPaqueteMensaje().getUserEmisor());
-					chat.setVisible(true);
-					break;
-					
-				case Comando.CHATALL:
-					paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
-					break;
+					case Comando.INICIOSESION:
+						usuariosConectados = (ArrayList<String>) gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
+						break;
+						
+					// CONEXION = SE CONECTO OTRO USUARIO, ENTONCES LE MANDO LA LISTA
+					// A TODOS LOS USUARIOS ANTERIORES A EL
+						
+					case Comando.CONEXION:
+						usuariosConectados = (ArrayList<String>) gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
+						cliente.getPaqueteUsuario().setListaDeConectados(usuariosConectados);
+	//					VentanaContactos.actualizarLista(cliente);
+						actualizarLista(cliente);
+						break;
+					// ACA RECIBI EL MENSAJE DEL OTRO CLIENTE
+					case Comando.TALK:
+						System.out.println("GG RAFA ESCUCHA MENSAJE");
+						
+						cliente.setPaqueteMensaje((PaqueteMensaje) gson.fromJson(objetoLeido, PaqueteMensaje.class));
+						
+						// CREO QUE SI LO HAGO CON PAQUETE MENSAJE QUEDA MAS CORTO, MEDIO 
+						// AL PEDO PASARLE EL CLIENTE AL CHAT
+						
+//						paqueteMensaje = (PaqueteMensaje) gson.fromJson(objetoLeido, PaqueteMensaje.class);
+						
+						MiChat chat = new MiChat(cliente);
+//						chat.setTitle(paqueteMensaje.getUserEmisor());
+//						chat.getChat().append(paqueteMensaje.getUserEmisor() + ": "  + paqueteMensaje.getMensaje() + "\n");
+						chat.setTitle(cliente.getPaqueteMensaje().getUserEmisor());
+						chat.getChat().append(cliente.getPaqueteMensaje().getUserEmisor() + ": "  + cliente.getPaqueteMensaje().getMensaje() + "\n");
+						chat.setVisible(true);
+						break;
+						
+					case Comando.CHATALL:
+						paqueteMensaje = gson.fromJson(objetoLeido, PaqueteMensaje.class);
+						break;
 				}
 			}
 		} catch (Exception e) {

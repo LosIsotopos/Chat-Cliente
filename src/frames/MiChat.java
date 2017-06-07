@@ -64,19 +64,20 @@ public class MiChat extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(!texto.getText().equals("")) {
 					chat.append("Me: " + texto.getText() + "\n");
+					
 					// MANDO EL COMANDO PARA QUE ENVIE EL MSJ
 					cliente.setAccion(Comando.TALK);
+					
 					cliente.getPaqueteMensaje().setUserEmisor(cliente.getPaqueteUsuario().getUsername());
 					cliente.getPaqueteMensaje().setUserReceptor(getTitle());
 					cliente.getPaqueteMensaje().setMensaje(texto.getText());
-					System.out.println("UserEmisor: " + cliente.getPaqueteUsuario().getUsername());
-					System.out.println("UserReceptor: " + getTitle());
-					System.out.println("Mensaje: " + texto.getText());
+					
 					synchronized (cliente) {
 						cliente.notify();
 					}
 					texto.setText("");
 				}
+				texto.requestFocus();
 			}
 		});
 		//SI TOCO ENVIAR
@@ -85,6 +86,17 @@ public class MiChat extends JFrame {
 			public void actionPerformed(ActionEvent e) {
 				if(!texto.getText().equals("")) {
 					chat.append("Me: " + texto.getText() + "\n");
+					
+					// MANDO EL COMANDO PARA QUE ENVIE EL MSJ
+					cliente.setAccion(Comando.TALK);
+					
+					cliente.getPaqueteMensaje().setUserEmisor(cliente.getPaqueteUsuario().getUsername());
+					cliente.getPaqueteMensaje().setUserReceptor(getTitle());
+					cliente.getPaqueteMensaje().setMensaje(texto.getText());
+					
+					synchronized (cliente) {
+						cliente.notify();
+					}
 					texto.setText("");
 				}
 				texto.requestFocus();
@@ -110,7 +122,7 @@ public class MiChat extends JFrame {
 			dispose();
 	}
 	
-	private void msjRecibido() {
-		chat.append(client.getPaqueteMensaje().getUserEmisor() + ": "  + texto.getText() + "\n");
+	public JTextArea getChat() {
+		return chat;
 	}
 }

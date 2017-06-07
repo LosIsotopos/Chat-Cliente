@@ -69,7 +69,9 @@ public class Cliente extends Thread {
 				while (!paqueteUsuario.isInicioSesion()) {
 					
 					// Espero a que el usuario seleccione alguna accion
+					System.out.println("ESPERANDO A QUE EL USUARIO HAGA ALGO");
 					wait();
+					System.out.println("EL USUARIO HIZO ALGO");
 					
 					switch (getAccion()) {
 					
@@ -103,7 +105,10 @@ public class Cliente extends Thread {
 						default:
 							break;
 					}
-			
+					
+					salida.flush();
+					
+					
 					// Le envio el paquete al servidor
 					/**
 					 * ESTA ARRIBA EN CADA SWITCH PORQUE USO DOS PAQUETES DIFERENTES  
@@ -111,7 +116,10 @@ public class Cliente extends Thread {
 //					salida.writeObject(gson.toJson(paqueteUsuario));
 
 					// Recibo el paquete desde el servidor
+					System.out.println("ESPERANDO LEER EN CLIENTE");
 					String cadenaLeida = (String) entrada.readObject();
+					System.out.println("LEI EN CLIENTE");
+					
 					Paquete paquete = gson.fromJson(cadenaLeida, Paquete.class);
 			
 					switch (paquete.getComando()) {
@@ -159,6 +167,8 @@ public class Cliente extends Thread {
 						default:
 							break;
 						}
+					
+					salida.flush();
 //					wait();
 				}
 			
@@ -168,9 +178,9 @@ public class Cliente extends Thread {
 				notify();
 				
 			} catch (IOException | InterruptedException | ClassNotFoundException e) {
-				JOptionPane.showMessageDialog(null, "Fallo la conexión con el servidor durante el inicio de sesión.");
-				System.exit(1);
+				JOptionPane.showMessageDialog(null, "Fallo la conexión del Cliente.");
 				e.printStackTrace();
+				System.exit(1);
 			}
 		}
 	}

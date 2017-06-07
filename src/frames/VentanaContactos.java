@@ -29,7 +29,7 @@ import mensajeria.PaqueteUsuario;
 //public class VentanaContactos extends JFrame {
 public class VentanaContactos extends JFrame {
 	private String user = null;
-	private static Cliente cliente;
+	private Cliente cliente;
 	private boolean flagConexion = false;
 	private PaqueteUsuario paqueteUsuario;
 	
