@@ -8,6 +8,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -25,20 +26,21 @@ import javax.swing.border.EmptyBorder;
 import cliente.Cliente;
 import cliente.EscuchaServer;
 import mensajeria.Comando;
+import mensajeria.Paquete;
 import mensajeria.PaqueteUsuario;
 
 public class VentanaContactos extends JFrame {
-	private static String user = null;
+	private String user = null;
 	private Cliente cliente;
 	private PaqueteUsuario paqueteUsuario;
 	
 	private JPanel contentPane;
 	private DefaultListModel<String> modelo = new DefaultListModel<String>();
 	private static JList<String> list = new JList<String>();
-	private static JTextField jTFMiNombre;
+	private JTextField jTFMiNombre;
 	private static JLabel lblNumeroConectados = new JLabel("");
 	private static JButton botonMc;
-	private static JButton botonConectar;
+	private JButton botonConectar;
 
 	private String ipScanned = "localhost";
 	private int puertoScanned = 9999;
@@ -88,8 +90,7 @@ public class VentanaContactos extends JFrame {
 				if (abrirVentanaConfirmaSalir()) {
 					if (cliente != null) {
 						synchronized (cliente) {
-							// Desconectar para que aparezca que tal usuario
-							// deslogeo
+							// Desconectar para que aparezca que tal usuario deslogeo
 							cliente.setAccion(Comando.DESCONECTAR);
 							cliente.notify();
 						}
@@ -113,11 +114,15 @@ public class VentanaContactos extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent arg0) {
 				if (arg0.getClickCount() == 2) {
-					if (cliente != null) {
-						MiChat chat = new MiChat(cliente);
-						cliente.getChatsActivos().put(list.getSelectedValue(), chat);
-						chat.setTitle(list.getSelectedValue());
-						chat.setVisible(true);
+					if(list.getSelectedValue() != null) {
+						if(!cliente.getChatsActivos().containsKey(list.getSelectedValue())) {
+							if (cliente != null) {
+								MiChat chat = new MiChat(cliente);
+								cliente.getChatsActivos().put(list.getSelectedValue(), chat);
+								chat.setTitle(list.getSelectedValue());
+								chat.setVisible(true);
+							}	
+						}
 					}
 				}
 			}
@@ -165,20 +170,39 @@ public class VentanaContactos extends JFrame {
 							public void windowClosed(WindowEvent e) {
 								user = interfaceLogeo.getNombreUsuario();
 								if (user != null) {
-									setTitle("User: " + user);
-									jTFMiNombre.setText(user);
 									cliente = new Cliente(ipScanned, puertoScanned);
 									cliente.start();
+									
 			                        while(cliente.getState() != Thread.State.WAITING) {	
 			                        }
 									logIn(cliente);		
-									
-									actualizarLista(cliente);
-									
 									EscuchaServer em = new EscuchaServer(cliente);
 									em.start();
 									
-									botonConectar.setEnabled(false);
+									synchronized (this) {
+										try {
+											this.wait(200);
+										} catch (InterruptedException e1) {
+											e1.printStackTrace();
+										}
+									}
+									
+									if(cliente.getPaqueteUsuario().getMensaje().equals(Paquete.msjExito)) {
+										setTitle("User: " + user);
+										jTFMiNombre.setText(user);
+										actualizarLista(cliente);
+										botonConectar.setEnabled(false);
+									} else {
+										try {
+											cliente.getSalida().close();
+											cliente.getEntrada().close();
+											cliente.getSocket().close();
+											cliente.stop();
+											user = null;
+										} catch (IOException e1) {
+											e1.printStackTrace();
+										}
+									}	
 								}
 							}
 						});
@@ -219,7 +243,7 @@ public class VentanaContactos extends JFrame {
 
 	private void logIn(final Cliente cliente) {
 		cliente.setAccion(Comando.INICIOSESION);
-		cliente.getPaqueteUsuario().setUsername(jTFMiNombre.getText());
+		cliente.getPaqueteUsuario().setUsername(user);
 		synchronized (cliente) {
 			cliente.notify();
 		}
@@ -255,17 +279,5 @@ public class VentanaContactos extends JFrame {
 	
 	public static JButton getBotonMc() {
 		return botonMc;
-	}
-	
-	public static JButton getBotonConectar() {
-		return botonConectar;
-	}
-	
-	public static JTextField getjTFMiNombre() {
-		return jTFMiNombre;
-	}
-
-	public static void setUser(String user) {
-		VentanaContactos.user = user;
 	}
 }

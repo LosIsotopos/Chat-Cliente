@@ -72,7 +72,6 @@ public class Cliente extends Thread {
 							
 						case Comando.TALK:
 							paqueteMensaje.setComando(Comando.TALK);
-							
 							// Le envio el paquete al servidor
 							salida.writeObject(gson.toJson(paqueteMensaje));
 							
@@ -80,7 +79,6 @@ public class Cliente extends Thread {
 							
 						case Comando.CHATALL:
 							paqueteMensaje.setComando(Comando.CHATALL);
-							
 							// Le envio el paquete al servidor
 							salida.writeObject(gson.toJson(paqueteMensaje));
 							break;
@@ -98,8 +96,7 @@ public class Cliente extends Thread {
 					
 					salida.flush();
 				}
-			
-				// Establezco el mapa en el paquete usuario
+
 				paqueteUsuario.setIp(miIp);
 				salida.writeObject(gson.toJson(paqueteUsuario));
 				notify();

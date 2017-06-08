@@ -15,10 +15,6 @@ import mensajeria.Paquete;
 import mensajeria.PaqueteDeUsuarios;
 import mensajeria.PaqueteMensaje;
 
-/**
- * La clase EscuchaMensajes tiene como función esuchar los mensajes que se
- * enviaran al servidor.
- */
 public class EscuchaServer extends Thread {
 
 	private Cliente cliente;
@@ -28,12 +24,6 @@ public class EscuchaServer extends Thread {
 
 	protected static ArrayList<String> usuariosConectados = new ArrayList<String>();
 
-	/**
-	 * Constructor de EsuchaMensaje
-	 * 
-	 * @param juego
-	 *            juego del que se escucha el mensaje
-	 */
 	public EscuchaServer(final Cliente cliente) {
 		this.cliente = cliente;
 		this.entrada = cliente.getEntrada();
@@ -41,9 +31,7 @@ public class EscuchaServer extends Thread {
 
 	@Override
 	public void run() {
-
 		try {
-
 			Paquete paquete;
 			ArrayList<String> usuariosAntiguos = new ArrayList<String>();
 			ArrayList<String> diferenciaContactos = new ArrayList<String>();
@@ -59,14 +47,11 @@ public class EscuchaServer extends Thread {
 				switch (paquete.getComando()) {
 				
 					case Comando.INICIOSESION:
+						cliente.getPaqueteUsuario().setMensaje(paquete.getMensaje());
+						
 						if(paquete.getMensaje().equals(Paquete.msjFracaso)) {
-							VentanaContactos.getBotonConectar().setEnabled(true);
-							VentanaContactos.getjTFMiNombre().setText("");
-							VentanaContactos.setUser(null);
-							// HAY QUE CERRAR SOCKETS Y ESAS COSAS SON LAS 00:48 :D
-							// OSEA PARA EL CLIENTE LA ESCUCHA Y ESAS COSAS, O A LO SUMO CERRAR
-							// DIRECTAMENTE DEL SV LOS SOCKETS, PORQUE SINO SALEN MAL LOS NOMBRES Y ESO.
-							// TODO
+							JOptionPane.showMessageDialog(null, "Usuario existente, por favor logee con otro usuario.");
+							this.stop();
 						} else {
 							usuariosConectados = (ArrayList<String>) gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();							
 						}
@@ -95,6 +80,7 @@ public class EscuchaServer extends Thread {
 						cliente.getPaqueteUsuario().setListaDeConectados(usuariosConectados);
 						actualizarLista(cliente);
 						break;
+					
 					// ACA RECIBI EL MENSAJE DEL OTRO CLIENTE
 					case Comando.TALK:
 						
@@ -147,24 +133,13 @@ public class EscuchaServer extends Thread {
 						modelo.addElement(cad);
 					}
 					VentanaContactos.getLblNumeroConectados().setText(String.valueOf(modelo.getSize()));
-//					VentanaContactos.lblNumeroConectados.setText(String.valueOf(modelo.getSize()));
 					VentanaContactos.getList().setModel(modelo);
-//					VentanaContactos.list.setModel(modelo);
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-	
-	/**
-	 * Pide los usuarios conectados
-	 * 
-	 * @return devuelve el mapa con los personajes conectados
-	 */
-//	public Map<String, PaqueteUsuario> getPersonajesConectados() {
-//		return personajesConectados;
-//	}
 
 	public static ArrayList<String> getUsuariosConectados() {
 		return usuariosConectados;

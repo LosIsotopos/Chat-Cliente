@@ -10,7 +10,6 @@ public class PaqueteDeUsuarios extends Paquete implements Serializable, Cloneabl
 		private Map<String, PaqueteUsuario> personajesConectados;
 
 		public PaqueteDeUsuarios(){
-
 		}
 
 		public Map<String, PaqueteUsuario> getPersonajesConectados() {
@@ -31,5 +30,4 @@ public class PaqueteDeUsuarios extends Paquete implements Serializable, Cloneabl
 			obj = super.clone();
 			return obj;
 		}
-
-	}
+}

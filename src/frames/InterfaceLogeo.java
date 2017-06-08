@@ -16,22 +16,6 @@ public class InterfaceLogeo extends JFrame {
 	private JTextField textField;
 	private String nombreUsuario;
 
-//	/**
-//	 * Launch the application.
-//	 */
-//	public static void main(String[] args) {
-//		EventQueue.invokeLater(new Runnable() {
-//			public void run() {
-//				try {
-//					InterfaceLogeo frame = new InterfaceLogeo();
-//					frame.setVisible(true);
-//				} catch (Exception e) {
-//					e.printStackTrace();
-//				}
-//			}
-//		});
-//	}
-
 	/**
 	 * Create the frame.
 	 */
@@ -54,6 +38,7 @@ public class InterfaceLogeo extends JFrame {
 				dispose();
 			}
 		});
+		
 		btnIniciar.setBounds(12, 45, 97, 25);
 		contentPane.add(btnIniciar);
 		
@@ -63,6 +48,7 @@ public class InterfaceLogeo extends JFrame {
 				dispose();
 			}
 		});
+		
 		btnCancelar.setBounds(158, 45, 97, 25);
 		contentPane.add(btnCancelar);
 		
@@ -75,6 +61,7 @@ public class InterfaceLogeo extends JFrame {
 				dispose();
 			}
 		});
+		
 		textField.setBounds(139, 13, 116, 22);
 		contentPane.add(textField);
 		textField.setColumns(10);

@@ -29,8 +29,7 @@ public class MiChat extends JFrame {
 	}
 	
 	/**
-	 * Create the frame.
-	 * @param chatsActivos 
+	 * Create the frame. 
 	 */
 	public MiChat(final Cliente cliente) {
 		this.client = cliente;
@@ -59,6 +58,7 @@ public class MiChat extends JFrame {
 				texto.requestFocus();
 			}
 		});
+		
 		//SI TOCO ENTER
 		texto.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -84,6 +84,7 @@ public class MiChat extends JFrame {
 				texto.requestFocus();
 			}
 		});
+		
 		//SI TOCO ENVIAR
 		JButton enviar = new JButton("ENVIAR");
 		enviar.addActionListener(new ActionListener() {
