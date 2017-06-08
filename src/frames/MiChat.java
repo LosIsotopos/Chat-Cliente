@@ -24,9 +24,6 @@ public class MiChat extends JFrame {
 	private JTextField texto;
 	private JTextArea chat;
 	private Cliente client;
-
-	public static void main(String[] args) {
-	}
 	
 	/**
 	 * Create the frame. 
@@ -130,7 +127,9 @@ public class MiChat extends JFrame {
 		int res = JOptionPane.showConfirmDialog(this, "¿Desea salir de la sesión de chat?", "Confirmación", JOptionPane.YES_NO_OPTION);
 		if(res == JOptionPane.YES_OPTION) {
 			client.getChatsActivos().remove(getTitle());
-			VentanaContactos.getBotonMc().setEnabled(true);
+			if(!client.getChatsActivos().containsKey("Sala")) {
+				VentanaContactos.getBotonMc().setEnabled(true);
+			}
 			dispose();
 		}
 	}

@@ -132,11 +132,13 @@ public class VentanaContactos extends JFrame {
 		botonMc.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(Integer.valueOf(lblNumeroConectados.getText()) != 0) {
-					MiChat chat = new MiChat(cliente);
-					cliente.getChatsActivos().put("Sala", chat);
-					chat.setTitle("Sala");
-					chat.setVisible(true);
-					botonMc.setEnabled(false);
+					if(!cliente.getChatsActivos().containsKey("Sala")) {
+						MiChat chat = new MiChat(cliente);
+						cliente.getChatsActivos().put("Sala", chat);
+						chat.setTitle("Sala");
+						chat.setVisible(true);
+						botonMc.setEnabled(false);
+					}
 				}
 			}
 		});
