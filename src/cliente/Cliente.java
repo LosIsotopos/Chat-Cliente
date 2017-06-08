@@ -1,15 +1,11 @@
 package cliente;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 
@@ -17,7 +13,6 @@ import com.google.gson.Gson;
 
 import frames.MiChat;
 import mensajeria.Comando;
-import mensajeria.Paquete;
 import mensajeria.PaqueteMensaje;
 import mensajeria.PaqueteUsuario;
 
@@ -28,7 +23,6 @@ public class Cliente extends Thread {
 	private ObjectOutputStream salida;
 	private PaqueteUsuario paqueteUsuario = new PaqueteUsuario();
 	private PaqueteMensaje paqueteMensaje = new PaqueteMensaje();
-//	private ArrayList<String> chatsActivos = new ArrayList<String>();
 	private Map<String, MiChat> chatsActivos = new HashMap<>();
 
 	private int accion;

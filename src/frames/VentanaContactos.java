@@ -27,18 +27,18 @@ import cliente.EscuchaServer;
 import mensajeria.Comando;
 import mensajeria.PaqueteUsuario;
 
-//public class VentanaContactos extends JFrame {
 public class VentanaContactos extends JFrame {
-	private String user = null;
+	private static String user = null;
 	private Cliente cliente;
 	private PaqueteUsuario paqueteUsuario;
 	
 	private JPanel contentPane;
 	private DefaultListModel<String> modelo = new DefaultListModel<String>();
 	private static JList<String> list = new JList<String>();
-	private JTextField jTFMiNombre;
+	private static JTextField jTFMiNombre;
 	private static JLabel lblNumeroConectados = new JLabel("");
 	private static JButton botonMc;
+	private static JButton botonConectar;
 
 	private String ipScanned = "localhost";
 	private int puertoScanned = 9999;
@@ -148,7 +148,7 @@ public class VentanaContactos extends JFrame {
 		list.setModel(modelo);
 		scrollPane.setViewportView(list);
 
-		JButton botonConectar = new JButton("Conectar");
+		botonConectar = new JButton("Conectar");
 		botonConectar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (user == null) {
@@ -255,5 +255,17 @@ public class VentanaContactos extends JFrame {
 	
 	public static JButton getBotonMc() {
 		return botonMc;
+	}
+	
+	public static JButton getBotonConectar() {
+		return botonConectar;
+	}
+	
+	public static JTextField getjTFMiNombre() {
+		return jTFMiNombre;
+	}
+
+	public static void setUser(String user) {
+		VentanaContactos.user = user;
 	}
 }

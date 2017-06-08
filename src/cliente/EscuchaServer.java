@@ -14,7 +14,6 @@ import mensajeria.Comando;
 import mensajeria.Paquete;
 import mensajeria.PaqueteDeUsuarios;
 import mensajeria.PaqueteMensaje;
-import mensajeria.PaqueteUsuario;
 
 /**
  * La clase EscuchaMensajes tiene como función esuchar los mensajes que se
@@ -46,8 +45,6 @@ public class EscuchaServer extends Thread {
 		try {
 
 			Paquete paquete;
-			PaqueteUsuario paqueteUsuario;
-			PaqueteMensaje paqueteMensaje;
 			ArrayList<String> usuariosAntiguos = new ArrayList<String>();
 			ArrayList<String> diferenciaContactos = new ArrayList<String>();
 
@@ -62,8 +59,17 @@ public class EscuchaServer extends Thread {
 				switch (paquete.getComando()) {
 				
 					case Comando.INICIOSESION:
-						usuariosConectados = (ArrayList<String>) gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();
-						
+						if(paquete.getMensaje().equals(Paquete.msjFracaso)) {
+							VentanaContactos.getBotonConectar().setEnabled(true);
+							VentanaContactos.getjTFMiNombre().setText("");
+							VentanaContactos.setUser(null);
+							// HAY QUE CERRAR SOCKETS Y ESAS COSAS SON LAS 00:48 :D
+							// OSEA PARA EL CLIENTE LA ESCUCHA Y ESAS COSAS, O A LO SUMO CERRAR
+							// DIRECTAMENTE DEL SV LOS SOCKETS, PORQUE SINO SALEN MAL LOS NOMBRES Y ESO.
+							// TODO
+						} else {
+							usuariosConectados = (ArrayList<String>) gson.fromJson(objetoLeido, PaqueteDeUsuarios.class).getPersonajes();							
+						}
 						break;
 						
 					// CONEXION = SE CONECTO OTRO USUARIO, ENTONCES LE MANDO LA LISTA
